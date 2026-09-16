@@ -1,0 +1,79 @@
+# Painel Decap CMS — EXCLUSIVO do projeto gabu
+# Backend git-gateway: usa o Netlify Identity + Git Gateway deste site
+# (nenhum app OAuth externo é necessário).
+backend:
+  name: git-gateway
+  branch: main
+
+# Salva rascunhos como Pull Requests / editorial workflow (opcional, recomendado)
+publish_mode: editorial_workflow
+
+# Uploads de imagem vão para /photos (mesma pasta usada pelo index.html)
+media_folder: "photos"
+public_folder: "/photos"
+
+locale: "pt"
+
+site_url: https://gabu.netlify.app
+display_url: https://gabu.netlify.app
+logo_url: https://gabu.netlify.app/favicon.ico
+
+collections:
+  - name: "publicacoes"
+    label: "Publicações"
+    label_singular: "Publicação"
+    folder: "content/publicacoes"
+    create: true
+    slug: "{{fields.id}}"
+    identifier_field: title
+    summary: "{{title}}  ·  {{cat}}"
+    fields:
+      - { label: "ID (slug único)", name: "id", widget: "string", hint: "Ex.: a-mao, travessia. Sem espaços/acentos." }
+      - { label: "Título", name: "title", widget: "string" }
+      - label: "Categoria"
+        name: "cat"
+        widget: "select"
+        options:
+          - { label: "Escrita", value: "escrita" }
+          - { label: "Cinema", value: "cinema" }
+          - { label: "Fotografia", value: "fotografia" }
+          - { label: "Som", value: "som" }
+          - { label: "Videocast", value: "videocast" }
+      - label: "Tipo de mídia"
+        name: "kind"
+        widget: "select"
+        options:
+          - { label: "Texto", value: "text" }
+          - { label: "YouTube", value: "youtube" }
+          - { label: "Imagem", value: "image" }
+          - { label: "Spotify", value: "spotify" }
+      - { label: "Rótulo (k)", name: "k", widget: "string", required: false, hint: "Ex.: Ensaio, Curta, Podcast · B9" }
+      - { label: "Meta", name: "meta", widget: "string", required: false, hint: "Ex.: Ensaio · 7 min" }
+      - { label: "Fonte / src", name: "src", widget: "string", required: false, hint: "ID do YouTube, caminho da foto (photos/...), ou episode/ID do Spotify." }
+      - { label: "Imagem (upload)", name: "image", widget: "image", required: false, hint: "Para publicações de fotografia." }
+      - { label: "Descrição", name: "desc", widget: "text", required: false }
+      - { label: "Corpo (texto)", name: "body", widget: "markdown", required: false, hint: "Usado quando o tipo é Texto." }
+      - label: "Ficha técnica"
+        name: "ficha"
+        widget: "list"
+        required: false
+        label_singular: "Linha"
+        fields:
+          - { label: "Rótulo", name: "rotulo", widget: "string" }
+          - { label: "Valor", name: "valor", widget: "string" }
+
+  - name: "config"
+    label: "Configurações do site"
+    files:
+      - name: "geral"
+        label: "Geral"
+        file: "content/config/geral.json"
+        fields:
+          - { label: "Nome do site", name: "nome", widget: "string" }
+          - { label: "E-mail de contato", name: "email", widget: "string" }
+          - label: "Redes sociais"
+            name: "socials"
+            widget: "list"
+            fields:
+              - { label: "Rótulo", name: "label", widget: "string" }
+              - { label: "URL", name: "url", widget: "string" }

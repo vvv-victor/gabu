@@ -1,0 +1,16 @@
+# Site estático — nenhum passo de build é necessário.
+[build]
+  publish = "."
+  command = ""
+
+# Cache leve para as imagens
+[[headers]]
+  for = "/photos/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# O painel /admin nunca deve ser cacheado agressivamente
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    Cache-Control = "no-cache"

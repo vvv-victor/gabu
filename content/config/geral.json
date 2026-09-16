@@ -1,0 +1,10 @@
+{
+  "nome": "GABU",
+  "email": "oi@gabu.cc",
+  "socials": [
+    { "label": "Instagram", "url": "#" },
+    { "label": "YouTube", "url": "#" },
+    { "label": "Spotify", "url": "#" },
+    { "label": "Newsletter", "url": "#" }
+  ]
+}
