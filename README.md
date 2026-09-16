@@ -1,14 +1,14 @@
 # GABU — arquivo multimídia
 
-Site estático (single-file, SPA por hash-router) com painel de conteúdo **Decap CMS** exclusivo, pronto para publicar no **Netlify**.
+Site estático (single-file, SPA por hash-router) com painel de conteúdo **Sveltia CMS** exclusivo, pronto para publicar no **Netlify**.
 
 ## Estrutura
 
 ```
 index.html              # o site (design + dados)
 admin/
-  index.html            # carrega Decap CMS + Netlify Identity
-  config.yml            # painel EXCLUSIVO deste projeto (backend git-gateway)
+  index.html            # carrega Sveltia CMS
+  config.yml            # painel EXCLUSIVO deste projeto (backend GitHub)
 content/
   publicacoes/*.md      # publicações editáveis pelo painel
   config/geral.json     # nome, e-mail e redes sociais
@@ -26,7 +26,7 @@ O nome combinado é **`gabu`** (público), na conta `vvv-victor`.
 # dentro desta pasta
 git init
 git add .
-git commit -m "GABU — site + painel Decap CMS"
+git commit -m "GABU — site + painel Sveltia CMS"
 git branch -M main
 git remote add origin https://github.com/vvv-victor/gabu.git
 git push -u origin main
@@ -44,17 +44,28 @@ git push -u origin main
 4. **Deploy site**. Em ~1 min o site estará no ar (ex.: `https://gabu.netlify.app`).
    - Opcional: **Site settings → Change site name** para definir `gabu` no subdomínio.
 
-## 3) Ativar o painel /admin (Decap CMS)
+## 3) Ativar o painel /admin (Sveltia CMS)
 
-O painel usa **git-gateway**, então precisa do Netlify Identity ligado:
+O Sveltia usa o **backend GitHub direto** (não usa Netlify Identity/Git Gateway).
+É preciso um **OAuth** para o login. O jeito mais simples, hospedando no Netlify:
 
-1. No site do Netlify → **Site configuration → Identity** → **Enable Identity**.
-2. **Identity → Registration** → mude para **Invite only** (recomendado).
-3. **Identity → Services → Git Gateway** → **Enable Git Gateway**.
-4. **Identity → Invite users** → convide o **seu e-mail**. Aceite o convite pelo link recebido e defina a senha.
-5. Acesse `https://SEU-SITE.netlify.app/admin/` e faça login. Pronto — você edita as publicações e configurações por ali.
+1. Crie um **GitHub OAuth App**: <https://github.com/settings/developers> → **New OAuth App**
+   - **Application name:** gabu CMS
+   - **Homepage URL:** `https://SEU-SITE.netlify.app`
+   - **Authorization callback URL:** `https://api.netlify.com/auth/done`
+   - Anote o **Client ID** e gere um **Client Secret**.
+2. No Netlify: **User settings → Applications → OAuth → Install provider** (ou
+   **Site configuration → Access & security → OAuth**) → escolha **GitHub** e cole
+   o Client ID/Secret do passo 1.
+3. Acesse `https://SEU-SITE.netlify.app/admin/` → **Login with GitHub**. Pronto —
+   você edita as publicações e configurações por ali, com commit direto no repo.
 
-> Se, ao abrir `/admin/`, o login não aparecer, confirme que o widget do Identity está ativo (passo 1) e o Git Gateway habilitado (passo 3).
+> Alternativa sem Netlify OAuth: usar o worker oficial **sveltia-cms-auth**
+> (Cloudflare) e apontar `backend.base_url` no `config.yml` para ele. Veja
+> <https://github.com/sveltia/sveltia-cms#authentication>.
+
+> Importante: no `admin/config.yml`, o `backend.repo` já está como
+> `vvv-victor/gabu`. Se você usar outro nome/conta, ajuste essa linha.
 
 ## 4) Ajustar o `site_url` do painel
 
@@ -64,7 +75,7 @@ Depois de saber o endereço final, edite `admin/config.yml` e troque as três UR
 
 ## Observação sobre os dados
 
-Hoje o `index.html` já traz o conteúdo embutido no próprio arquivo (array `ITEMS`). O painel Decap grava as publicações em `content/publicacoes/*.md`. Para que **o que você editar no painel apareça automaticamente no site**, é preciso um passo extra: fazer o `index.html` ler esses arquivos (via fetch de um `content.json` gerado, ou um pequeno build). Isso ficou como próximo passo — me avise que eu conecto os dois.
+Hoje o `index.html` já traz o conteúdo embutido no próprio arquivo (array `ITEMS`). O painel Sveltia grava as publicações em `content/publicacoes/*.md`. Para que **o que você editar no painel apareça automaticamente no site**, é preciso um passo extra: fazer o `index.html` ler esses arquivos (via fetch de um `content.json` gerado, ou um pequeno build). Isso ficou como próximo passo — me avise que eu conecto os dois.
 
 ## Fotos
 

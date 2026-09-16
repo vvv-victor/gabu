@@ -1,12 +1,10 @@
-# Painel Decap CMS — EXCLUSIVO do projeto gabu
-# Backend git-gateway: usa o Netlify Identity + Git Gateway deste site
-# (nenhum app OAuth externo é necessário).
+# Painel Sveltia CMS — EXCLUSIVO do projeto gabu
+# Backend GitHub direto (Sveltia não usa git-gateway/Netlify Identity).
+# A autenticação usa o provedor OAuth do Netlify (base_url padrão).
 backend:
-  name: git-gateway
+  name: github
+  repo: vvv-victor/gabu
   branch: main
-
-# Salva rascunhos como Pull Requests / editorial workflow (opcional, recomendado)
-publish_mode: editorial_workflow
 
 # Uploads de imagem vão para /photos (mesma pasta usada pelo index.html)
 media_folder: "photos"
