@@ -12,9 +12,9 @@ public_folder: "/photos"
 
 locale: "pt"
 
-site_url: https://gabu.netlify.app
-display_url: https://gabu.netlify.app
-logo_url: https://gabu.netlify.app/favicon.ico
+site_url: https://gaybu.netlify.app
+display_url: https://gaybu.netlify.app
+logo_url: https://gaybu.netlify.app/favicon.ico
 
 collections:
   - name: "publicacoes"
