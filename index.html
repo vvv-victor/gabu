@@ -304,6 +304,16 @@
 <div class="cursor-gabu" aria-hidden="true">gabu</div>
 <div id="app"></div>
 
+<!-- Form estático só para o Netlify detectar os campos no build (o form visível é injetado via JS) -->
+<form name="contato" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden aria-hidden="true">
+  <input type="hidden" name="form-name" value="contato">
+  <input type="text" name="nome">
+  <input type="email" name="email">
+  <input type="text" name="assunto">
+  <textarea name="mensagem"></textarea>
+  <input name="bot-field">
+</form>
+
 <script>
 (function(){
   /* ---------- icons ---------- */
@@ -527,7 +537,9 @@
   function contactView(){
     return '<article class="wrap contact-page"><div class="item" style="--c:var(--c-escrita)">'+
       crumbs([{label:'gabu',href:'#/'},{label:'Contato'}])+
-      '<form id="contactForm" class="form" novalidate>'+
+      '<form id="contactForm" class="form" name="contato" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>'+
+        '<input type="hidden" name="form-name" value="contato">'+
+        '<p hidden><label>Não preencha: <input name="bot-field"></label></p>'+
         '<label class="field"><span>Nome</span><input name="nome" autocomplete="name" placeholder="como te chamo?" required></label>'+
         '<label class="field"><span>E-mail</span><input type="email" name="email" autocomplete="email" placeholder="pra onde respondo" required></label>'+
         '<label class="field"><span>Assunto</span><input name="assunto" placeholder="do que se trata"></label>'+
@@ -562,10 +574,23 @@
           note.hidden=false; note.textContent='Preencha nome, e-mail e mensagem.'; return;
         }
         var d = new FormData(cf);
-        var subj = (d.get('assunto')||('Contato via gabu — '+(d.get('nome')||''))).toString();
-        var body = 'Nome: '+(d.get('nome')||'')+'\n\n'+(d.get('mensagem')||'')+'\n\n— '+(d.get('email')||'');
-        note.hidden=false; note.textContent='Abrindo seu e-mail…';
-        window.location.href = 'mailto:'+SITE.email+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);
+        var params = new URLSearchParams();
+        d.forEach(function(v,k){ params.append(k, v); });
+        if(!params.get('form-name')) params.append('form-name','contato');
+        note.hidden=false; note.textContent='Enviando…';
+        var btn = cf.querySelector('button[type="submit"]');
+        if(btn) btn.disabled = true;
+        fetch('/', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: params.toString()})
+          .then(function(r){ if(!r.ok) throw new Error('http '+r.status); })
+          .then(function(){ note.textContent='Mensagem enviada! Em breve te respondo. Obrigado.'; cf.reset(); })
+          .catch(function(){
+            // fallback: abre o e-mail do visitante
+            var subj = (d.get('assunto')||('Contato via gabu — '+(d.get('nome')||''))).toString();
+            var body = 'Nome: '+(d.get('nome')||'')+'\n\n'+(d.get('mensagem')||'')+'\n\n— '+(d.get('email')||'');
+            note.textContent='Não consegui enviar pelo site. Abrindo seu e-mail…';
+            window.location.href = 'mailto:'+SITE.email+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);
+          })
+          .finally(function(){ if(btn) btn.disabled = false; });
       });
     }
     initPlayers();
