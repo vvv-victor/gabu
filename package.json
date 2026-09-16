@@ -1,0 +1,13 @@
+{
+  "name": "gabu",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GABU — arquivo multimídia. Site estático + Sveltia CMS.",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-content.mjs"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3"
+  }
+}

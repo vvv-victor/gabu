@@ -5,15 +5,20 @@ Site estático (single-file, SPA por hash-router) com painel de conteúdo **Svel
 ## Estrutura
 
 ```
-index.html              # o site (design + dados)
+index.html              # o site (lê content.json em runtime)
+content.json            # gerado pelo build a partir de content/
 admin/
   index.html            # carrega Sveltia CMS
   config.yml            # painel EXCLUSIVO deste projeto (backend GitHub)
 content/
   publicacoes/*.md      # publicações editáveis pelo painel
   config/geral.json     # nome, e-mail e redes sociais
+scripts/
+  build-content.mjs     # gera content.json (roda no deploy)
+  migrate-from-index.mjs# utilitário único de migração (histórico)
 photos/                 # uploads de imagem do painel
-netlify.toml            # config de publicação (sem build)
+netlify.toml            # publicação + build (npm run build)
+package.json            # dependências do build (gray-matter)
 ```
 
 ---
@@ -73,9 +78,30 @@ Depois de saber o endereço final, edite `admin/config.yml` e troque as três UR
 
 ---
 
-## Observação sobre os dados
+## Como o conteúdo funciona (CMS ligado ao site)
 
-Hoje o `index.html` já traz o conteúdo embutido no próprio arquivo (array `ITEMS`). O painel Sveltia grava as publicações em `content/publicacoes/*.md`. Para que **o que você editar no painel apareça automaticamente no site**, é preciso um passo extra: fazer o `index.html` ler esses arquivos (via fetch de um `content.json` gerado, ou um pequeno build). Isso ficou como próximo passo — me avise que eu conecto os dois.
+O conteúdo mora em arquivos e o site lê deles — o que você editar no painel aparece no site após o deploy:
+
+1. Cada publicação é um arquivo em **`content/publicacoes/*.md`** (frontmatter + corpo).
+   As configurações (nome, e-mail, redes) ficam em **`content/config/geral.json`**.
+2. No deploy, o Netlify roda **`npm run build`** → `scripts/build-content.mjs` lê esses
+   arquivos e gera **`content.json`** na raiz.
+3. O **`index.html`** faz `fetch('content.json')` ao abrir e desenha tudo a partir dali.
+
+Fluxo de edição: você mexe no `/admin` → o Sveltia faz commit no `content/` → o Netlify
+rebuilda → o `content.json` é regenerado → o site reflete a mudança.
+
+> As **categorias** (Escrita, Cinema, Fotografia, Som, Videocast) continuam fixas no
+> `index.html`, porque estão ligadas às cores/estilos do tema.
+
+### Rodar o build localmente
+```bash
+npm install
+npm run build   # gera content.json
+```
+
+`scripts/migrate-from-index.mjs` foi o utilitário único que migrou o conteúdo antigo
+(embutido no `index.html`) para os arquivos `.md`. Não precisa rodar de novo.
 
 ## Fotos
 

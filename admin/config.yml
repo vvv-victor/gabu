@@ -27,6 +27,7 @@ collections:
     summary: "{{title}}  ·  {{cat}}"
     fields:
       - { label: "ID (slug único)", name: "id", widget: "string", hint: "Ex.: a-mao, travessia. Sem espaços/acentos." }
+      - { label: "Ordem", name: "order", widget: "number", value_type: "int", required: false, default: 99, hint: "Menor aparece primeiro na categoria." }
       - { label: "Título", name: "title", widget: "string" }
       - label: "Categoria"
         name: "cat"

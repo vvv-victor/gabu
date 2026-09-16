@@ -1,7 +1,10 @@
-# Site estático — nenhum passo de build é necessário.
+# Build: gera o content.json a partir de content/publicacoes/*.md
 [build]
   publish = "."
-  command = ""
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "22"
 
 # Cache leve para as imagens
 [[headers]]
